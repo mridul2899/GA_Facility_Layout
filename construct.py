@@ -105,13 +105,13 @@ def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
                 if min_coord[0] + w / 2 < EMS[0] or min_coord[0] - w / 2 > EMS[2] or min_coord[1] + h / 2 < EMS[1] or min_coord[1] - h / 2 > EMS[3]:
                     continue
                 else:
-                    if (min_coord[0] + w / 2 <= EMS[2]):
+                    if (min_coord[0] + w / 2 < EMS[2]):
                         EMSlist.append([min_coord[0] + w / 2, EMS[1], EMS[2], EMS[3]])
-                    if (min_coord[0] - w / 2 >= EMS[0]):
+                    if (min_coord[0] - w / 2 > EMS[0]):
                         EMSlist.append([EMS[0], EMS[1], min_coord[0] - w / 2, EMS[3]])
-                    if (min_coord[1] - h / 2 >= EMS[1]):
+                    if (min_coord[1] - h / 2 > EMS[1]):
                         EMSlist.append([EMS[0], EMS[1], EMS[2], min_coord[1] - h / 2])
-                    if (min_coord[1] + h / 2 <= EMS[3]):
+                    if (min_coord[1] + h / 2 < EMS[3]):
                         EMSlist.append([EMS[0], min_coord[1] + h / 2, EMS[2], EMS[3]])
                     del EMSlist[k]
             #break
