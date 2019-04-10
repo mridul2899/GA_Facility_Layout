@@ -1,11 +1,12 @@
 # Implementation of BGA (hard)
+# Put GC as 0 for first type of greedy criteria, non-zero for second type
 
 import math
 import numpy as np
 import random
 from GAproj import ini_pop, alpha, populationsize, Flow
 
-def construct(pop, Area, ratioareatoflow, AspectRatios):
+def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0):
     z_values = []
     for row in range(len(pop)):
         total_z = 0
@@ -75,6 +76,16 @@ def construct(pop, Area, ratioareatoflow, AspectRatios):
                 for j in range(i):
                     distance = math.sqrt(((coordinates_set[j][0] - new_coordinate[0]) ** 2) + ((coordinates_set[j][1] - new_coordinate[1]) ** 2))
                     z += distance * Flow[chromosome[j] - 1][chromosome[i] - 1]
+                if GC != 0:
+                    z1 = 0
+                    distanceToOrigin = math.sqrt(new_coordinate[0] ** 2 + new_coordinate[1] ** 2)
+                    for j in range(i):
+                        z1 += Flow[chromosome[j] - 1][chromosome[i] - 1]
+                    z1 *= distanceToOrigin
+                    z1 = z1 * (len(chromosome) - i - 1) / (len(chromosome) - 1)
+                    z *= (1 - (len(chromosome) - i - 1) / (len(chromosome) - 1))
+                    z += z1
+
                 if z < min_z:
                     min_z = z
                     min_coord = new_coordinate
@@ -109,4 +120,5 @@ if __name__ == "__main__":
     Area = returned[1]
     ratioareatoflow = returned[2]
     AspectRatios = returned[3]
-    z_values = construct(pop, Area, ratioareatoflow, AspectRatios)
+    GC = 1
+    z_values = construct(pop, Area, ratioareatoflow, AspectRatios, GC)
