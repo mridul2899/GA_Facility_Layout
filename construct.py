@@ -1,4 +1,5 @@
-# Implementation of BGA (hard)
+# Implementation of BGA/QGA (hard)
+# For QGA, set QGA = 1
 # Put GC as 0 for first type of greedy criteria, non-zero for second type
 
 import math
@@ -6,7 +7,7 @@ import numpy as np
 import random
 from GAproj import ini_pop, alpha, populationsize, Flow
 
-def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0):
+def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
     z_values = []
     for row in range(len(pop)):
         total_z = 0
@@ -17,10 +18,17 @@ def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0):
         w = math.sqrt(AspectRatios[chromosome[0] - 1] * Area[chromosome[0] - 1])
         h = math.sqrt(Area[chromosome[0] - 1] / AspectRatios[chromosome[0] - 1])
         coordinates_set.append([w / 2, h / 2])
-        EMSlist.append([w, -math.inf, math.inf, math.inf])
-        EMSlist.append([-math.inf, -math.inf, math.inf, 0])
-        EMSlist.append([-math.inf, -math.inf, 0, math.inf])
-        EMSlist.append([-math.inf, h, math.inf, math.inf])
+        if QGA == 0:
+            EMSlist.append([w, -math.inf, math.inf, math.inf])
+            EMSlist.append([-math.inf, -math.inf, math.inf, 0])
+            EMSlist.append([-math.inf, -math.inf, 0, math.inf])
+            EMSlist.append([-math.inf, h, math.inf, math.inf])
+        elif QGA == 1:
+            EMSlist.append([-math.inf, -math.inf, 0, 0])
+            EMSlist.append([-math.inf, 0, 0, math.inf])
+            EMSlist.append([0, -math.inf, math.inf, 0])
+            EMSlist.append([w, 0, math.inf, math.inf])
+            EMSlist.append([0, h, math.inf, math.inf])
         for i in range(1, len(chromosome)):
             x_mean = 0
             y_mean = 0
@@ -97,13 +105,13 @@ def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0):
                 if min_coord[0] + w / 2 < EMS[0] or min_coord[0] - w / 2 > EMS[2] or min_coord[1] + h / 2 < EMS[1] or min_coord[1] - h / 2 > EMS[3]:
                     continue
                 else:
-                    if (min_coord[0] + w / 2 != EMS[2]):
+                    if (min_coord[0] + w / 2 <= EMS[2]):
                         EMSlist.append([min_coord[0] + w / 2, EMS[1], EMS[2], EMS[3]])
-                    if (min_coord[0] - w / 2 != EMS[0]):
+                    if (min_coord[0] - w / 2 >= EMS[0]):
                         EMSlist.append([EMS[0], EMS[1], min_coord[0] - w / 2, EMS[3]])
-                    if (min_coord[1] - h / 2 != EMS[1]):
+                    if (min_coord[1] - h / 2 >= EMS[1]):
                         EMSlist.append([EMS[0], EMS[1], EMS[2], min_coord[1] - h / 2])
-                    if (min_coord[1] + h / 2 != EMS[3]):
+                    if (min_coord[1] + h / 2 <= EMS[3]):
                         EMSlist.append([EMS[0], min_coord[1] + h / 2, EMS[2], EMS[3]])
                     del EMSlist[k]
             #break
@@ -121,4 +129,5 @@ if __name__ == "__main__":
     ratioareatoflow = returned[2]
     AspectRatios = returned[3]
     GC = 1
-    z_values = construct(pop, Area, ratioareatoflow, AspectRatios, GC)
+    QGA = 1
+    z_values = construct(pop, Area, ratioareatoflow, AspectRatios, GC, QGA)
