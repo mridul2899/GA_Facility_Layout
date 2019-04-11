@@ -8,7 +8,7 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-from GAproj import ini_pop, alpha, populationsize, Flow
+from GAproj import ini_pop, alpha, nPop, Flow
 
 def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
     fig1 = plt.figure()
@@ -134,9 +134,9 @@ def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
         all_coordinates.append(coordinates_set)
         
         #break
-    print(z_values)
+    #print(z_values)
     minpos = z_values.index(min(z_values))
-    print(all_coordinates[minpos])
+    #print(all_coordinates[minpos])
     chromosome = pop[minpos]
     minx = math.inf
     miny = math.inf
@@ -164,7 +164,7 @@ def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
     return z_values
 
 if __name__ == "__main__":
-    returned = ini_pop(populationsize)
+    returned = ini_pop(nPop)
     pop = returned[0]
     print(pop)
     Area = returned[1]
