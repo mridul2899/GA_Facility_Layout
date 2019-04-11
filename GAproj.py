@@ -3,7 +3,7 @@ import numpy as np
 import random
 
 alpha = 5
-populationsize = 5
+nPop = 100
 Flow = [[0, 0, 2, 1, 0, 4, 3, 0, 0, 5],
 [0, 0, 3, 0, 2, 2, 8, 0, 10, 0],
 [2, 3, 0, 0, 0, 6, 3, 0, 5, 0],
@@ -50,5 +50,5 @@ def ini_pop(populationsize):
 	return init_pop, Area, ratioareatoflow, AspectRatios
 
 if __name__ == "__main__":
-	pop = ini_pop(populationsize)[0]
+	pop = ini_pop(nPop)[0]
 	print(pop)
