@@ -5,9 +5,15 @@
 import math
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
 from GAproj import ini_pop, alpha, populationsize, Flow
 
 def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
+    fig1 = plt.figure()
+    ax1 = fig1.add_subplot(111, aspect='equal')
+    all_coordinates = []
     z_values = []
     for row in range(len(pop)):
         total_z = 0
@@ -100,25 +106,61 @@ def construct(pop, Area, ratioareatoflow, AspectRatios, GC = 0, QGA = 0):
             total_z += min_z
             #print(min_z, min_coord, distance)
             coordinates_set.append(min_coord)
+            toAddEMSlist = []
+            toRemoveEMSlist = []
             for k in range(len(EMSlist)):
                 EMS = EMSlist[k]
                 if min_coord[0] + w / 2 < EMS[0] or min_coord[0] - w / 2 > EMS[2] or min_coord[1] + h / 2 < EMS[1] or min_coord[1] - h / 2 > EMS[3]:
                     continue
                 else:
                     if (min_coord[0] + w / 2 < EMS[2]):
-                        EMSlist.append([min_coord[0] + w / 2, EMS[1], EMS[2], EMS[3]])
+                        toAddEMSlist.append([min_coord[0] + w / 2, EMS[1], EMS[2], EMS[3]])
                     if (min_coord[0] - w / 2 > EMS[0]):
-                        EMSlist.append([EMS[0], EMS[1], min_coord[0] - w / 2, EMS[3]])
+                        toAddEMSlist.append([EMS[0], EMS[1], min_coord[0] - w / 2, EMS[3]])
                     if (min_coord[1] - h / 2 > EMS[1]):
-                        EMSlist.append([EMS[0], EMS[1], EMS[2], min_coord[1] - h / 2])
+                        toAddEMSlist.append([EMS[0], EMS[1], EMS[2], min_coord[1] - h / 2])
                     if (min_coord[1] + h / 2 < EMS[3]):
-                        EMSlist.append([EMS[0], min_coord[1] + h / 2, EMS[2], EMS[3]])
-                    del EMSlist[k]
+                        toAddEMSlist.append([EMS[0], min_coord[1] + h / 2, EMS[2], EMS[3]])
+                    toRemoveEMSlist.append(k)
+            
+            i = 0
+            for remove in toRemoveEMSlist:
+                del EMSlist[remove - i]
+                i += 1
+            for newEMS in toAddEMSlist:
+                EMSlist.append(newEMS)
             #break
         z_values.append(total_z)
+        all_coordinates.append(coordinates_set)
         
         #break
     print(z_values)
+    minpos = z_values.index(min(z_values))
+    print(all_coordinates[minpos])
+    chromosome = pop[minpos]
+    minx = math.inf
+    miny = math.inf
+    maxx = -math.inf
+    maxy = -math.inf
+    for i in range(len(chromosome)):
+        w = math.sqrt(AspectRatios[chromosome[i] - 1] * Area[chromosome[i] - 1])
+        h = math.sqrt(Area[chromosome[i] - 1] / AspectRatios[chromosome[i] - 1])
+        x = all_coordinates[minpos][i][0]
+        y = all_coordinates[minpos][i][1]
+        ax1.add_patch(patches.Rectangle((x - w / 2, y - h / 2), w, h, facecolor = "gray", edgecolor = "black"))
+        ax1.annotate(str(chromosome[i]), xy = (x, y), fontsize = 10)
+        if minx > x:
+            minx = x
+        if maxx < x:
+            maxx = x
+        if miny > y:
+            miny = y
+        if maxy < y:
+            maxy = y
+    plt.ylim(miny - 5, maxy + 5)
+    plt.xlim(minx - 5, maxx + 5)
+    plt.show()
+    
     return z_values
 
 if __name__ == "__main__":
